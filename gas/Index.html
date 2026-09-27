@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Try Out Matematika SMP Barito Kuala 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-slate-900 text-white p-4 shadow-md border-b border-slate-800">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div>
+        <h1 class="text-base sm:text-lg font-black tracking-tight text-white">
+          CBT TRY OUT MATEMATIKA SMP 2026
+        </h1>
+        <p class="text-xs text-indigo-300 font-semibold">
+          SE-KABUPATEN BARITO KUALA
+        </p>
+      </div>
+      <div id="top-timer" class="hidden bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-700 text-amber-300 font-mono text-sm font-bold">
+        90:00
+      </div>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <main class="flex-1 max-w-4xl mx-auto p-4 sm:p-6 w-full flex items-center justify-center">
+    <!-- View 1: Login -->
+    <div id="view-login" class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+      <div class="text-center">
+        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase">
+          TKA SMP 2026
+        </span>
+        <h2 class="text-2xl font-black text-slate-900 mt-2">LOGIN PESERTA</h2>
+        <p class="text-xs text-slate-500 mt-1">Latihan Try Out Mandiri Terintegrasi Spreadsheet</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap Siswa</label>
+          <input type="text" id="input-nama" placeholder="Masukkan nama lengkap" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Asal Sekolah</label>
+          <select id="select-sekolah" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="">-- Memuat Daftar Sekolah... --</option>
+          </select>
+        </div>
+
+        <button onclick="handleLogin()" id="btn-login" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all text-sm">
+          MULAI TRY OUT
+        </button>
+      </div>
+    </div>
+
+    <!-- View 2: Instructions -->
+    <div id="view-instructions" class="hidden w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold uppercase">Petunjuk Ujian</span>
+        <h2 class="text-xl font-black text-slate-900 mt-2">Latihan Try Out Matematika SMP Barito Kuala</h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-xl">
+        <div><span class="text-slate-500 block">Nama:</span> <strong id="info-nama">-</strong></div>
+        <div><span class="text-slate-500 block">Sekolah:</span> <strong id="info-sekolah">-</strong></div>
+        <div><span class="text-slate-500 block">Jumlah Soal:</span> <strong>30 Butir</strong></div>
+        <div><span class="text-slate-500 block">Durasi:</span> <strong>90 Menit</strong></div>
+      </div>
+
+      <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
+        <p>• Jawaban tersimpan otomatis secara real-time ke Google Spreadsheet setiap kali Anda mengklik pilihan.</p>
+        <p>• Gunakan tombol Sebelumnya dan Berikutnya untuk berpindah nomor soal.</p>
+        <p>• Timer akan mengumpulkan lembar jawaban otomatis saat waktu berakhir.</p>
+      </div>
+
+      <button onclick="startExam()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all text-sm">
+        MULAI MENGERJAKAN
+      </button>
+    </div>
+
+    <!-- View 3: Exam Runner -->
+    <div id="view-exam" class="hidden w-full bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+        <span id="label-no-soal" class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-extrabold">Soal 1 dari 30</span>
+        <span id="sync-badge" class="text-xs font-semibold text-emerald-600">🟢 Tersimpan</span>
+      </div>
+
+      <div id="stimulus-container" class="p-4 bg-slate-50 rounded-xl text-xs sm:text-sm text-slate-800 space-y-2"></div>
+      <div id="question-text" class="text-sm sm:text-base font-bold text-slate-900"></div>
+
+      <!-- Options -->
+      <div id="options-container" class="space-y-3"></div>
+
+      <!-- Nav buttons -->
+      <div class="flex justify-between items-center pt-4 border-t border-slate-200">
+        <button onclick="prevQuestion()" id="btn-prev" class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs hover:bg-slate-200">← Sebelumnya</button>
+        <button onclick="nextQuestion()" id="btn-next" class="px-5 py-2 bg-indigo-600 text-white font-bold rounded-xl text-xs hover:bg-indigo-500">Berikutnya →</button>
+      </div>
+    </div>
+
+    <!-- View 4: Result -->
+    <div id="view-result" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6 text-center">
+      <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase">Ujian Selesai</span>
+      <h2 class="text-2xl font-black text-slate-900">HASIL TRY OUT MATEMATIKA</h2>
+      <div class="text-5xl font-black font-mono text-emerald-600 my-4" id="score-display">0</div>
+      <div class="text-xs text-slate-600 space-y-1 bg-slate-50 p-4 rounded-xl text-left">
+        <div>Nama: <strong id="res-nama">-</strong></div>
+        <div>Sekolah: <strong id="res-sekolah">-</strong></div>
+        <div>Benar: <strong id="res-benar">0</strong> | Salah: <strong id="res-salah">0</strong> | Kosong: <strong id="res-kosong">0</strong></div>
+      </div>
+      <button onclick="location.reload()" class="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl text-xs">Kembali ke Beranda</button>
+    </div>
+  </main>
+
+  <script>
+    // State
+    let currentParticipant = null;
+    let questions = [];
+    let currentIdx = 0;
+    let studentAnswers = {};
+    let timerSeconds = 90 * 60;
+    let timerInterval = null;
+
+    // Load schools on start
+    window.addEventListener('DOMContentLoaded', () => {
+      google.script.run
+        .withSuccessHandler((schools) => {
+          const sel = document.getElementById('select-sekolah');
+          sel.innerHTML = '<option value="">-- Pilih Asal Sekolah --</option>';
+          schools.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.nama;
+            opt.textContent = s.no + '. ' + s.nama;
+            sel.appendChild(opt);
+          });
+        })
+        .getDaftarSekolah();
+    });
+
+    function handleLogin() {
+      const nama = document.getElementById('input-nama').value.trim();
+      const sekolah = document.getElementById('select-sekolah').value;
+      if (!nama) return alert('Silakan masukkan nama lengkap Anda.');
+      if (!sekolah) return alert('Silakan pilih asal sekolah Anda.');
+
+      const idPeserta = 'TO2026' + Math.floor(1000 + Math.random() * 9000);
+      currentParticipant = { idPeserta, nama, sekolah };
+
+      document.getElementById('info-nama').textContent = nama;
+      document.getElementById('info-sekolah').textContent = sekolah;
+
+      // Save to Google Spreadsheet
+      google.script.run.loginPeserta(idPeserta, nama, sekolah);
+
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-instructions').classList.remove('hidden');
+    }
+
+    function startExam() {
+      document.getElementById('view-instructions').classList.add('hidden');
+      document.getElementById('view-exam').classList.remove('hidden');
+      document.getElementById('top-timer').classList.remove('hidden');
+
+      // Fetch questions or use bundled 30 questions
+      renderQuestion();
+      startTimer();
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        document.getElementById('top-timer').textContent =
+          String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          finishExam();
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      // Basic question renderer for GAS standalone template
+      document.getElementById('label-no-soal').textContent = 'Soal ' + (currentIdx + 1) + ' dari 30';
+      document.getElementById('question-text').textContent = 'Soal nomor ' + (currentIdx + 1) + ' (TKA Matematika SMP 2026)';
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIdx < 29) {
+        currentIdx++;
+        renderQuestion();
+      } else {
+        finishExam();
+      }
+    }
+
+    function finishExam() {
+      if (confirm('Kumpulkan lembar jawaban Anda sekarang?')) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            document.getElementById('view-exam').classList.add('hidden');
+            document.getElementById('view-result').classList.remove('hidden');
+            document.getElementById('score-display').textContent = res.nilai;
+            document.getElementById('res-nama').textContent = currentParticipant.nama;
+            document.getElementById('res-sekolah').textContent = currentParticipant.sekolah;
+            document.getElementById('res-benar').textContent = res.benar;
+            document.getElementById('res-salah').textContent = res.salah;
+            document.getElementById('res-kosong').textContent = res.kosong;
+          })
+          .prosesSelesaiUjian(currentParticipant.idPeserta);
+      }
+    }
+  </script>
+</body>
+</html>

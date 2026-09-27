@@ -1,0 +1,6 @@
+{
+  "name": "CBT Latihan Try Out TKA Matematika SMP Barito Kuala 2026",
+  "description": "Aplikasi CBT Online Latihan Try Out TKA Matematika SMP se-Kabupaten Barito Kuala Tahun 2026 berbasis kisi-kisi resmi dan terintegrasi Google Spreadsheet / Google Apps Script.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
